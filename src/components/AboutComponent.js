@@ -1,31 +1,53 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media, CardImg } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
+import {FadeTransform, Fade, Stagger} from 'react-animation-components';
 
-
-function RenderLeader({leader}){
+function RenderLeader({leader, isLoading, errMess}){
+    if(isLoading){
+        return(
+            <Loading />
+        );
+    }
+    else if(errMess){
+        return(
+        <h4>{errMess}</h4>
+        );
+    }
+    else{
+    return leader.leaders.map((leader) => {
     return(
-        <Media tag="li">
-            <Media left top>
-                <Media object src={leader.image} alt={leader.name} />
-            </Media>
-            <Media body className="ml-5">
-                <Media heading>{leader.name}</Media>
-                <p>{leader.designation}</p>
-                <p>{leader.description}</p>
-            </Media>
-        </Media>   
+        <FadeTransform in transformProps={{exitTransform: 'scale(0.5) translateY(-50%)'}}>
+            <Media tag="li">
+                <Media left top>
+                    <Media object src={baseUrl+leader.image} alt={leader.name} />
+                </Media>
+                <Media body className="ml-5">
+                    <Stagger in>
+                        <Fade in>
+                            <Media heading>{leader.name}</Media>
+                        </Fade>
+                        <Fade in>
+                            <p>{leader.designation}</p>
+                        </Fade>
+                        <Fade in>
+                            <p>{leader.description}</p>
+                        </Fade>
+                    </Stagger>
+                </Media>
+            </Media>  
+        </FadeTransform>
     );
+});
+}
 }
 
 function About(props) {
 
-    const leaders = props.leaders.map((leader_s) => {
-        return (
-             <RenderLeader leader={leader_s}/>
-        );
-    });
-
+    const leaders =<RenderLeader leader={props.leader} isLoading={props.leaderLoading} errMess={props.leaderErrMess} />; 
+        
     return(
         <div className="container">
             <div className="row">
